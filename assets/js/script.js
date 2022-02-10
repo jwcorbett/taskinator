@@ -1,5 +1,9 @@
 var formEl = document.querySelector("#task-form");
 var tasksToDoEl = document.querySelector("#tasks-to-do");
+
+var pageContentEl = document.querySelector("#page-content");
+
+
 // Create a counter that increments by one each time a task is created.
 var taskIdCounter = 0;
 
@@ -57,6 +61,13 @@ var createTaskEl = function(taskDataObj) {
 
 
 var createTaskActions = function(taskId) {
+  console.log(event.target);
+
+  if (event.target.matches(".delete-btn")) {
+    // get the element's task id
+    var taskId = event.target.getAttribute("data-task-id");
+    console.log(taskId);
+  }
   // the following lines of code create a new <div> 
   //element with the class name "task-actions":
   var actionContainerEl = document.createElement("div");
@@ -106,4 +117,68 @@ actionContainerEl.appendChild(statusSelectEl);
 return actionContainerEl;
 };
 
+var taskButtonHandler = function(event) {
+  // get target element from event
+  var targetEl = event.target;
+
+  // edit button was clicked
+  if (targetEl.matches(".edit-btn")) {
+    var taskId = targetEl.getAttribute("data-task-id");
+    editTask(taskId);
+  } 
+  // delete button was clicked
+  else if (targetEl.matches(".delete-btn")) {
+    var taskId = targetEl.getAttribute("data-task-id");
+    deleteTask(taskId);
+  }
+};
+  
+//Delete Task Function
+var deleteTask = function(taskId) {
+  console.log(taskId);
+
+
+//See that we're selecting a list item using .task-item and further 
+//narrowing the search by looking for a .task-item that has a 
+//data-task-id equal to the argument we've passed into the function. 
+//Also notice that there's no space between the .task-item and 
+//the [data-task-id] attribute, which means that both properties must 
+//be on the same element;
+var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+taskSelected.remove();
+  };
+
+  //Edit Task Function
+  var editTask = function(taskId) {
+    
+  
+    // get task list item element
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+
+    // get content from task name and type
+var taskName = taskSelected.querySelector("h3.task-name").textContent;
+
+
+var taskType = taskSelected.querySelector("span.task-type").textContent;
+
+document.querySelector("input[name='task-name']").value = taskName;
+document.querySelector("select[name='task-type']").value = taskType;
+
+// set data attribute to the form with a value of the task's id so it knows which one is being edited
+formEl.setAttribute("data-task-id", taskId);
+
+ // update form's button to reflect editing a task rather than creating a new one
+ formEl.querySelector("#save-task").textContent = "Save Task";
+  };
+
+
+    
+
+
+  
+
+
+
 formEl.addEventListener("submit", taskFormHandler);
+
+pageContentEl.addEventListener("click", taskButtonHandler);
